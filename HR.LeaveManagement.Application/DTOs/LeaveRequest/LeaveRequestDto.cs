@@ -1,13 +1,16 @@
-﻿using HR.LeaveManagement.Dormain.Common;
+﻿using HR.LeaveManagement.Application.DTOs.Common;
+using HR.LeaveManagement.Application.DTOs.LeaveType;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace HR.LeaveManagement.Dormain
+namespace HR.LeaveManagement.Application.DTOs.LeaveRequests
 {
-    public class LeaveRequest : BaseDormainEntity
+    public class LeaveRequestDto:BaseDto
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public LeaveType LeaveType { get; set; }
+        public LeaveTypeDto LeaveType { get; set; }
         public int LeaveId { get; set; }
         public DateTime DateRequested { get; set; }
         public string RequestComment { get; set; }
