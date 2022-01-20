@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using HR.LeaveManagement.Application.Persistence.Contracts;
+using HR.LeaveManagement.Application.Contracts.Persistence;
 using System;
 
 namespace HR.LeaveManagement.Application.DTOs.LeaveAllocation.validators
@@ -9,6 +9,7 @@ namespace HR.LeaveManagement.Application.DTOs.LeaveAllocation.validators
         private readonly ILeaveTypeRepository _leaveTypeRepository;
         public CreateLeaveAllocationDtoValidators(ILeaveTypeRepository leaveTypeRepository)
         {
+            _leaveTypeRepository = leaveTypeRepository;
             Include(new ILeaveAllocationDtoValidators(_leaveTypeRepository));
         }
     }
