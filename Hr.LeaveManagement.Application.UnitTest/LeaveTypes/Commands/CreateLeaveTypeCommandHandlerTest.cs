@@ -6,6 +6,7 @@ using HR.LeaveManagement.Application.DTOs.LeaveType;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Profiles;
+using HR.LeaveManagement.Application.Responses;
 using Moq;
 using Shouldly;
 using System.Threading;
@@ -47,6 +48,8 @@ namespace Hr.LeaveManagement.Application.UnitTest.LeaveTypes.Commands
             result.ShouldBeOfType<int>();
             var leaveTypes = await  _mockRepo.Object.GetAll();
 
+
+            result.ShouldBeOfType<BaseCommandResponse>();
             leaveTypes.Count.ShouldBe(3);
         }
 
@@ -54,16 +57,14 @@ namespace Hr.LeaveManagement.Application.UnitTest.LeaveTypes.Commands
         public async Task Inavlid_LeaveType_addded()
         {
             _leaveTypedto.DefaultDays = -1;
-            ValidationException ex = await Should.ThrowAsync<ValidationException>
-                (
-                  async () =>
-                  await _handler.Handle(new CreateLeaveTypeCommand { leaveTypeDto = _leaveTypedto }, CancellationToken.None)
-                );
+            var result = await _handler.Handle(new CreateLeaveTypeCommand { leaveTypeDto = _leaveTypedto }, CancellationToken.None);
 
             var leaveTypes = await _mockRepo.Object.GetAll();
 
 
             leaveTypes.Count.ShouldBe(2);
+
+            result.ShouldBeOfType<BaseCommandResponse>();
 
         }
     }

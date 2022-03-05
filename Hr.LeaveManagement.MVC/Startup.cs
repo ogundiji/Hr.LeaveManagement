@@ -1,13 +1,13 @@
+using Hr.LeaveManagement.MVC.Contracts;
+using Hr.LeaveManagement.MVC.Services;
+using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Hr.LeaveManagement.MVC
 {
@@ -23,6 +23,12 @@ namespace Hr.LeaveManagement.MVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient<IClient, Client>(c=>c.BaseAddress= new Uri("https://localhost:44390"));
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddScoped<ILeaveTypeService, LeaveTypeService>();
+
+
+            services.AddSingleton<ILocalStorageService, LocalStorageService>();
             services.AddControllersWithViews();
         }
 
