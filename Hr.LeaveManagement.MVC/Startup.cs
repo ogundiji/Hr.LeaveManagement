@@ -1,6 +1,6 @@
 using Hr.LeaveManagement.MVC.Contracts;
 using Hr.LeaveManagement.MVC.Services;
-using HR.LeaveManagement.MVC.Services.Base;
+using Hr.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
