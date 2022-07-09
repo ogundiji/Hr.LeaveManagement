@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Hr.LeaveManagement.MVC.Models;
-using HR.LeaveManagement.MVC.Services.Base;
+using Hr.LeaveManagement.MVC.Services.Base;
 
 namespace Hr.LeaveManagement.MVC
 {

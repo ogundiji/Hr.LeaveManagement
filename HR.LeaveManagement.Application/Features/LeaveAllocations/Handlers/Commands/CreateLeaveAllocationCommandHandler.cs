@@ -8,10 +8,11 @@ using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using HR.LeaveManagement.Application.Responses;
 
 namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Commands
 {
-    public class CreateLeaveAllocationCommandHandler : IRequestHandler<CreateLeaveAllocationCommand, int>
+    public class CreateLeaveAllocationCommandHandler : IRequestHandler<CreateLeaveAllocationCommand,BaseCommandResponse>
     {
         private readonly ILeaveTypeRepository _leaveType;
         private readonly ILeaveRequestRepository leaveRequest;
@@ -23,8 +24,9 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             _mapper = mapper;
         }
 
-        public async Task<int> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
+        public async Task<BaseCommandResponse> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
+            var response = new BaseCommandResponse();
             var validators = new CreateLeaveAllocationDtoValidators(_leaveType);
             var validationResult = await validators.ValidateAsync(request.leaveAllocationDto);
 
@@ -35,7 +37,11 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             var leave = _mapper.Map<LeaveRequest>(request.leaveAllocationDto);
             var leaveResponse = await leaveRequest.Add(leave);
 
-            return leaveResponse.Id;
+            response.Success = true;
+            response.Message = "Creation Sucessfull";
+            response.Id = leave.Id;
+
+            return response;
         }
 
     }

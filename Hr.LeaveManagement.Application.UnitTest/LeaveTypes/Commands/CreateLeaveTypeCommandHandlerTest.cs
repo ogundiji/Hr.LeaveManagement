@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Hr.LeaveManagement.Application.UnitTest.Mocks;
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.DTOs.LeaveType;

@@ -2,7 +2,6 @@
 using Hr.LeaveManagement.MVC.Contracts;
 using Hr.LeaveManagement.MVC.Models;
 using Hr.LeaveManagement.MVC.Services.Base;
-using HR.LeaveManagement.MVC.Services.Base;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,7 +24,6 @@ namespace Hr.LeaveManagement.MVC.Services
 
         public async Task<Response<int>> CreateLeaveType(CreateLeaveTypeVM leaveType)
         {
-
             try
             {
                 var response = new Response<int>();
