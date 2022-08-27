@@ -1,4 +1,6 @@
-﻿using Hr.LeaveManagement.MVC.Contracts;
+﻿using AutoMapper;
+using Hr.LeaveManagement.MVC.Contracts;
+using Hr.LeaveManagement.MVC.Models;
 using Hr.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,10 +18,12 @@ namespace Hr.LeaveManagement.MVC.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private JwtSecurityTokenHandler _tokenHandler;
-        public AuthenticationService(IClient client,ILocalStorageService localStorage,IHttpContextAccessor httpContextAccessor):base(client,localStorage)
+        private IMapper _mapper;
+        public AuthenticationService(IClient client,ILocalStorageService localStorage,IHttpContextAccessor httpContextAccessor,IMapper mapper):base(client,localStorage)
         {
             this._httpContextAccessor = httpContextAccessor;
             this._tokenHandler = new JwtSecurityTokenHandler();
+            _mapper = mapper;
         }
         public async Task<bool> Authenticate(string email, string password)
         {
@@ -53,14 +57,14 @@ namespace Hr.LeaveManagement.MVC.Services
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public async Task<bool> Register(string firstName, string lastName, string userName, string email, string password)
+        public async Task<bool> Register(RegisterVm registration)
         {
-
-            RegistrationRequest registrationRequest = new() { Email=email,Firstname=firstName, Lastname=lastName,Username=userName, Password=password};
+            RegistrationRequest registrationRequest = _mapper.Map<RegistrationRequest>(registration);
             var response = await _client.RegisterAsync(registrationRequest);
 
             if (!string.IsNullOrEmpty(response.UserId))
             {
+                await Authenticate(registration.Email,registration.Password);
                 return true;
             }
             return false;

@@ -1,6 +1,5 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Identity;
 using HR.LeaveManagement.Application.Models.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -28,9 +27,5 @@ namespace Hr.LeaveManagement.Api.Controllers
         {
             return Ok(await _authenticationService.Register(registrationRequest));
         }
-
-
     }
-
-    
 }

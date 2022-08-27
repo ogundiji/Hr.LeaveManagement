@@ -16,6 +16,19 @@ namespace Hr.LeaveManagement.Persistence.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task AddAllocations(List<LeaveAllocation> allocations)
+        {
+            await _dbContext.LeaveAllocations.AddRangeAsync(allocations);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> AllocationExists(string userId, int leaveTypeId, int period)
+        {
+            return await _dbContext.LeaveAllocations.AnyAsync(x=>x.EmployeeId==userId
+            && x.LeaveTypeId==leaveTypeId 
+            && x.Period==period);
+        }
+
         public async Task<List<LeaveAllocation>> GetLeaveAllocationsWithDetails()
         {
             var leaveAllocations = await _dbContext.LeaveAllocations
