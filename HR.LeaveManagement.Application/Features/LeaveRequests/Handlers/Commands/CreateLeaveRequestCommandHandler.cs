@@ -12,20 +12,27 @@ using System.Threading.Tasks;
 using HR.LeaveManagement.Application.Contracts.Infrastructure;
 using HR.LeaveManagement.Application.Responses;
 using HR.LeaveManagement.Application.Models;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Security.Claims;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
     public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand,BaseCommandResponse>
     {
         private readonly ILeaveRequestRepository _leaveRequest;
+        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IEmailSender _emailSender;
         private readonly ILeaveTypeRepository _leaveType;
         private readonly IMapper _mapper;
+        
        
 
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequest, IEmailSender emailSender, IMapper mapper, ILeaveTypeRepository leaveType)
+        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequest, 
+            IHttpContextAccessor httpContextAccessor,IEmailSender emailSender, IMapper mapper, ILeaveTypeRepository leaveType)
         {
             _leaveRequest = leaveRequest;
+            this.httpContextAccessor = httpContextAccessor;
             _emailSender = emailSender;
             _mapper = mapper;
             _leaveType = leaveType;
@@ -36,33 +43,46 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             var response = new BaseCommandResponse();
             var validators = new CreateLeaveRequestDtoValidators(_leaveType);
             var validationResult = await validators.ValidateAsync(request.leaveRequestDto);
+            var userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(p => p.Type == "uid")?.Value;
 
             if (validationResult.IsValid == false)
-                throw new ValidationException(validationResult);
+            {
+                response.Success = false;
+                response.Message = "Creation failed";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();  
+            }
+            else
+            {
+                var leave = _mapper.Map<LeaveRequest>(request.leaveRequestDto);
+                var leaveResponse = await _leaveRequest.Add(leave);
+                leave.RequestingEmployeeId = userId;
+
+                response.Success = true;
+                response.Message = "Creation Sucessfull";
+                response.Id = leave.Id;
+
+                var emailAddress = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+
+                var email = new Email
+                {
+                    To = emailAddress,
+                    Body = $"your leave request for {request.leaveRequestDto.StartDate:D} to {request.leaveRequestDto.EndDate}"
+                    + $"has been successfully submitted",
+                    Subject = "Leave Request Submited"
+                };
+
+                try
+                {
+                    await _emailSender.SendEmail(email);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+               
              
-            var leave = _mapper.Map<LeaveRequest>(request.leaveRequestDto);
-            var leaveResponse = await _leaveRequest.Add(leave);
-
-            response.Success = true;
-            response.Message = "Creation Sucessfull";
-            response.Id = leave.Id;
-
-            var email = new Email
-            {
-                To="employee@org.com",
-                Body= $"your leave request for {request.leaveRequestDto.StartDate:D} to {request.leaveRequestDto.EndDate}"
-                + $"has been successfully submitted",
-                Subject="Leave Request Submited"
-            };
-
-            try
-            {
-                await _emailSender.SendEmail(email);
-            }
-            catch(Exception ex)
-            {
-
-            }
+           
 
             return response;
         }
