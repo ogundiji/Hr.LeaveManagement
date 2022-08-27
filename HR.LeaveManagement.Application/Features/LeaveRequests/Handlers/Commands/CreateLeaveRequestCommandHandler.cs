@@ -21,6 +21,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
     public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand,BaseCommandResponse>
     {
         private readonly ILeaveRequestRepository _leaveRequest;
+        private readonly ILeaveAllocationRepository leaveAllocationRepository;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IEmailSender _emailSender;
         private readonly ILeaveTypeRepository _leaveType;
@@ -28,10 +29,11 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         
        
 
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequest, 
+        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequest,ILeaveAllocationRepository leaveAllocationRepository,
             IHttpContextAccessor httpContextAccessor,IEmailSender emailSender, IMapper mapper, ILeaveTypeRepository leaveType)
         {
             _leaveRequest = leaveRequest;
+            this.leaveAllocationRepository = leaveAllocationRepository;
             this.httpContextAccessor = httpContextAccessor;
             _emailSender = emailSender;
             _mapper = mapper;
@@ -44,6 +46,23 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             var validators = new CreateLeaveRequestDtoValidators(_leaveType);
             var validationResult = await validators.ValidateAsync(request.leaveRequestDto);
             var userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(p => p.Type == "uid")?.Value;
+
+            var allocation = await leaveAllocationRepository.GetUserAllocations(userId, request.leaveRequestDto.LeaveId);
+            if (allocation is null)
+            {
+                validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure(nameof(request.leaveRequestDto.LeaveId),
+                    "You do not have any allocations for this leave type."));
+            }
+            else
+            {
+                int daysRequested = (int)(request.leaveRequestDto.EndDate - request.leaveRequestDto.StartDate).TotalDays;
+                if (daysRequested > allocation.NumberOfDays)
+                {
+                    validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure(
+                        nameof(request.leaveRequestDto.EndDate), "You do not have enough days for this request"));
+                }
+            }
+
 
             if (validationResult.IsValid == false)
             {

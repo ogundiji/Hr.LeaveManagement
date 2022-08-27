@@ -1,9 +1,7 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Dormain;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Hr.LeaveManagement.Persistence.Repositories
@@ -44,6 +42,12 @@ namespace Hr.LeaveManagement.Persistence.Repositories
                            .FirstOrDefaultAsync(x => x.Id == Id);
 
             return leaveAllocation;
+        }
+
+        public async Task<LeaveAllocation> GetUserAllocations(string userId, int leaveTypeId)
+        {
+            return await _dbContext.LeaveAllocations.FirstOrDefaultAsync(q => q.EmployeeId == userId
+                                       && q.LeaveTypeId == leaveTypeId);
         }
     }
 }

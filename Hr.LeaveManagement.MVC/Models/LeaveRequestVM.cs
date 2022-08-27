@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Hr.LeaveManagement.MVC.Models
@@ -43,4 +44,23 @@ namespace Hr.LeaveManagement.MVC.Models
         public string RequestComments { get; set; }
     }
 
+    public class AdminLeaveRequestViewVM
+    {
+        [Display(Name = "Total Number Of Requests")]
+        public int TotalRequests { get; set; }
+        [Display(Name = "Approved Requests")]
+        public int ApprovedRequests { get; set; }
+        [Display(Name = "Pending Requests")]
+        public int PendingRequests { get; set; }
+        [Display(Name = "Rejected Requests")]
+        public int RejectedRequests { get; set; }
+        public List<LeaveRequestVM> LeaveRequests { get; set; }
+    }
+
+
+    public class EmployeeLeaveRequestViewVM
+    {
+        public List<LeaveAllocationVM> LeaveAllocations { get; set; }
+        public List<LeaveRequestVM> LeaveRequests { get; set; }
+    }
 }
