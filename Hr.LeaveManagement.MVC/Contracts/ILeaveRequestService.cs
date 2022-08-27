@@ -7,9 +7,12 @@ namespace Hr.LeaveManagement.MVC.Contracts
 {
     public interface ILeaveRequestService
     {
-        //Task<Response<int>> CreateLeaveRequest(CreateLeaveRequestVM leaveRequest);
+        Task<Response<int>> CreateLeaveRequest(CreateLeaveRequestVM leaveRequest);
+       // Task<AdminLeaveRequestViewVM> GetAdminLeaveRequestList();
+       // Task<EmployeeLeaveRequestViewVM> GetUserLeaveRequests();
         Task<LeaveRequest> GetLeaveRequest(int id);
         Task DeleteLeaveRequest(int id);
         Task ApproveLeaveRequest(int id, bool approved);
+
     }
 }

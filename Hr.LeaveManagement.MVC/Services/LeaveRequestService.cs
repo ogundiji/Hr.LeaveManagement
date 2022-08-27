@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Hr.LeaveManagement.MVC.Contracts;
+using Hr.LeaveManagement.MVC.Models;
 using Hr.LeaveManagement.MVC.Services.Base;
 using HR.LeaveManagement.Dormain;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Hr.LeaveManagement.MVC.Services
@@ -36,42 +38,63 @@ namespace Hr.LeaveManagement.MVC.Services
             }
         }
 
-        //public async Task<Response<int>> CreateLeaveRequest(CreateLeaveRequestVM leaveRequest)
-        //{
-        //    try
-        //    {
-        //        var response = new Response<int>();
-        //        CreateLeaveRequestDto createLeaveRequest = _mapper.Map<CreateLeaveRequestDto>(leaveRequest);
-        //        AddBearerToken();
-        //        var apiResponse = await _client.LeaveRequestPOSTAsync(createLeaveRequest);
-        //        if (apiResponse.Success)
-        //        {
-        //            response.Data = apiResponse.Id;
-        //            response.Success = true;
-        //        }
-        //        else
-        //        {
-        //            foreach (var error in apiResponse.Errors)
-        //            {
-        //                response.ValidationErrors += error + Environment.NewLine;
-        //            }
-        //        }
-        //        return response;
-        //    }
-        //    catch (ApiException ex)
-        //    {
-        //        return ConvertApiExceptions<int>(ex);
-        //    }
-        //}
+        public async Task<Response<int>> CreateLeaveRequest(CreateLeaveRequestVM leaveRequest)
+        {
+            try
+            {
+                var response = new Response<int>();
+                CreateLeaveRequestDto createLeaveRequest = _mapper.Map<CreateLeaveRequestDto>(leaveRequest);
+                AddBearerToken();
+                var apiResponse = await _client.LeaveRequestPOSTAsync(createLeaveRequest);
+                if (apiResponse.Success)
+                {
+                    response.Data = apiResponse.Id;
+                    response.Success = true;
+                }
+                else
+                {
+                    foreach (var error in apiResponse.Errors)
+                    {
+                        response.ValidationErrors += error + Environment.NewLine;
+                    }
+                }
+                return response;
+            }
+            catch (ApiException ex)
+            {
+                return ConvertedApiExceptions<int>(ex);
+            }
+        }
 
         public Task DeleteLeaveRequest(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<LeaveRequest> GetLeaveRequest(int id)
+        public async Task<LeaveRequest> GetLeaveRequest(int id)
         {
-            throw new System.NotImplementedException();
+            AddBearerToken();
+            var leaveRequest = await _client.LeaveRequestGETAsync(id);
+            return _mapper.Map<LeaveRequest>(leaveRequest);
         }
+
+        //public async Task<AdminLeaveRequestViewVM> GetAdminLeaveRequestList()
+        //{
+        //    AddBearerToken();
+        //    var leaveRequests = await _client.LeaveRequestAllAsync(isLoggedInUser: false);
+
+
+        //    var model = new AdminLeaveRequestViewVM
+        //    {
+        //        TotalRequests = leaveRequests.Count,
+        //        ApprovedRequests = leaveRequests.Count(q => q.Approved == true),
+        //        PendingRequests = leaveRequests.Count(q => q.Approved == null),
+        //        RejectedRequests = leaveRequests.Count(q => q.Approved == false),
+        //        LeaveRequests = _mapper.Map<List<LeaveRequestVM>>(leaveRequests)
+        //    };
+        //    return model;
+        //}
+
+
     }
 }

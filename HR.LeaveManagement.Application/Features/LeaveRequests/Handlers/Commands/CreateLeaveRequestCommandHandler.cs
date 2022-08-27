@@ -80,23 +80,25 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                 response.Message = "Creation Sucessfull";
                 response.Id = leave.Id;
 
-                var emailAddress = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
-
-                var email = new Email
-                {
-                    To = emailAddress,
-                    Body = $"your leave request for {request.leaveRequestDto.StartDate:D} to {request.leaveRequestDto.EndDate}"
-                    + $"has been successfully submitted",
-                    Subject = "Leave Request Submited"
-                };
+               
 
                 try
                 {
+                    var emailAddress = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+
+                    var email = new Email
+                    {
+                        To = emailAddress,
+                        Body = $"your leave request for {request.leaveRequestDto.StartDate:D} to {request.leaveRequestDto.EndDate}"
+                        + $"has been successfully submitted",
+                        Subject = "Leave Request Submited"
+                    };
+
                     await _emailSender.SendEmail(email);
                 }
                 catch (Exception ex)
                 {
-
+                   //log exception
                 }
             }
                

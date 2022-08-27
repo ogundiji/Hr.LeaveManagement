@@ -4,6 +4,7 @@ using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Hr.LeaveManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LeaveRequestController : ControllerBase
     {
         public readonly IMediator _mediator;
@@ -36,6 +38,7 @@ namespace Hr.LeaveManagement.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<BaseCommandResponse>> post([FromBody] CreateLeaveRequestDto createLeaveRequestDto)
         {
             var command = new CreateLeaveRequestCommand() { leaveRequestDto = createLeaveRequestDto };
@@ -44,6 +47,7 @@ namespace Hr.LeaveManagement.Api.Controllers
         }
 
         [HttpPut("{Id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> put(int Id,[FromBody] UpdateLeaveRequestDto leaveRequestDto)
         {
             var command = new UpdateLeaveRequestCommand() { leaveRequestDto=leaveRequestDto,Id=Id };
@@ -60,6 +64,7 @@ namespace Hr.LeaveManagement.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Delete(int id)
         {
             var command = new DeleteLeaveRequestCommand() { Id = id };
