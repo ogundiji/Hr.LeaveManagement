@@ -1,5 +1,6 @@
 ﻿using Hr.LeaveManagement.MVC.Contracts;
 using Hr.LeaveManagement.MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Hr.LeaveManagement.MVC.Controllers
 {
+    [Authorize]
     public class LeaveRequestController : Controller
     {
 
@@ -51,6 +53,36 @@ namespace Hr.LeaveManagement.MVC.Controllers
             leaveRequest.LeaveTypes = leaveTypeItems;
 
             return View(leaveRequest);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        // GET: LeaveRequest
+        public async Task<ActionResult> Index()
+        {
+            var model = await _leaveRequestService.GetAdminLeaveRequestList();
+            return View(model);
+        }
+
+        public async Task<ActionResult> Details(int id)
+        {
+            var model = await _leaveRequestService.GetLeaveRequest(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> ApproveRequest(int id, bool approved)
+        {
+            try
+            {
+                await _leaveRequestService.ApproveLeaveRequest(id, approved);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

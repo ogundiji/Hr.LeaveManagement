@@ -3,11 +3,8 @@ using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Commands
 using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Queries;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hr.LeaveManagement.Api.Controllers
@@ -24,9 +21,9 @@ namespace Hr.LeaveManagement.Api.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<List<LeaveAllocationDto>>> Get()
+        public async Task<ActionResult<List<LeaveAllocationDto>>> Get(bool isLoggedInUser=false)
         {
-            var leaveRequests = await _mediator.Send(new GetLeaveAllocationListRequest());
+            var leaveRequests = await _mediator.Send(new GetLeaveAllocationListRequest() { IsLoggedInUser=isLoggedInUser});
             return Ok(leaveRequests);
         }
 

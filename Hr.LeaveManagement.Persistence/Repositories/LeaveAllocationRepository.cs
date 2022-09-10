@@ -2,6 +2,7 @@
 using HR.LeaveManagement.Dormain;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hr.LeaveManagement.Persistence.Repositories
@@ -32,6 +33,14 @@ namespace Hr.LeaveManagement.Persistence.Repositories
             var leaveAllocations = await _dbContext.LeaveAllocations
                 .Include(x => x.LeaveType)
                 .ToListAsync();
+            return leaveAllocations;
+        }
+
+        public async Task<List<LeaveAllocation>> GetLeaveAllocationsWithDetails(string userId)
+        {
+            var leaveAllocations = await _dbContext.LeaveAllocations.Where(q => q.EmployeeId == userId)
+              .Include(q => q.LeaveType)
+              .ToListAsync();
             return leaveAllocations;
         }
 

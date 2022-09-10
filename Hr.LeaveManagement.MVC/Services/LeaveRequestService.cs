@@ -5,6 +5,7 @@ using Hr.LeaveManagement.MVC.Services.Base;
 using HR.LeaveManagement.Dormain;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hr.LeaveManagement.MVC.Services
@@ -71,6 +72,8 @@ namespace Hr.LeaveManagement.MVC.Services
             throw new System.NotImplementedException();
         }
 
+        
+
         public async Task<LeaveRequest> GetLeaveRequest(int id)
         {
             AddBearerToken();
@@ -78,22 +81,27 @@ namespace Hr.LeaveManagement.MVC.Services
             return _mapper.Map<LeaveRequest>(leaveRequest);
         }
 
-        //public async Task<AdminLeaveRequestViewVM> GetAdminLeaveRequestList()
-        //{
-        //    AddBearerToken();
-        //    var leaveRequests = await _client.LeaveRequestAllAsync(isLoggedInUser: false);
+        public Task<EmployeeLeaveRequestViewVM> GetUserLeaveRequests()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<AdminLeaveRequestViewVM> GetAdminLeaveRequestList()
+        {
+            AddBearerToken();
+            var leaveRequests = await _client.LeaveRequestAllAsync(isLoggedInUser: false);
 
 
-        //    var model = new AdminLeaveRequestViewVM
-        //    {
-        //        TotalRequests = leaveRequests.Count,
-        //        ApprovedRequests = leaveRequests.Count(q => q.Approved == true),
-        //        PendingRequests = leaveRequests.Count(q => q.Approved == null),
-        //        RejectedRequests = leaveRequests.Count(q => q.Approved == false),
-        //        LeaveRequests = _mapper.Map<List<LeaveRequestVM>>(leaveRequests)
-        //    };
-        //    return model;
-        //}
+            var model = new AdminLeaveRequestViewVM
+            {
+                TotalRequests = leaveRequests.Count,
+                ApprovedRequests = leaveRequests.Count(q => q.Approved == true),
+                PendingRequests = leaveRequests.Count(q => q.Approved == null),
+                RejectedRequests = leaveRequests.Count(q => q.Approved == false),
+                LeaveRequests = _mapper.Map<List<LeaveRequestVM>>(leaveRequests)
+            };
+            return model;
+        }
 
 
     }
