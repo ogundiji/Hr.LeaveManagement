@@ -17,30 +17,30 @@ namespace Hr.LeaveManagement.Application.UnitTest.LeaveTypes.Queries
     public class GetLeaveTypeListRequestHandlerTest
     {
         private readonly IMapper _mapper;
-        private readonly Mock<ILeaveTypeRepository> _mockRepo;
+        private readonly Mock<IUnitOfWork> _mockUnow;
         public GetLeaveTypeListRequestHandlerTest()
         {
-            _mockRepo = MockLeaveTypeRepository.GetLeaveTypeRepository();
+            _mockUnow = MockUnitOfWork.GetUnitOfWork();
+            //_mockRepo = MockLeaveTypeRepository.GetLeaveTypeRepository();
 
             var mapperConfig = new MapperConfiguration(c =>
-             {
-                 c.AddProfile<MappingProfile>();
-             });
+            {
+                c.AddProfile<MappingProfile>();
+            });
 
             _mapper = mapperConfig.CreateMapper();
         }
 
-
         [Fact]
         public async Task GetLeaveTypeListTest()
         {
-            var handler = new GetLeaveTypeListRequestHandler(_mockRepo.Object,_mapper);
-            var result = await handler.Handle(new GetLeaveTypeListRequest(),CancellationToken.None);
+            var handler = new GetLeaveTypeListRequestHandler(_mockUnow.Object, _mapper);
+
+            var result = await handler.Handle(new GetLeaveTypeListRequest(), CancellationToken.None);
 
             result.ShouldBeOfType<List<LeaveTypeDto>>();
 
-            result.Count.ShouldBe(2);
+            result.Count.ShouldBe(3);
         }
-
     }
 }

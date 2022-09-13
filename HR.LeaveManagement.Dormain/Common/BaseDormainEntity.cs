@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HR.LeaveManagement.Dormain.Common
+namespace Hr.LeaveManagement.Dormain.Common
 {
     public abstract class BaseDormainEntity
     {

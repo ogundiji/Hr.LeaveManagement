@@ -11,14 +11,16 @@ namespace Hr.LeaveManagement.Persistence.Repositories
     public class UnitOfWork:IUnitOfWork
     {
         private readonly LeaveManagementDbContext _context;
+        private readonly IHttpContextAccessor httpContextAccessor;
         private ILeaveAllocationRepository _leaveAllocationRepository;
         private ILeaveTypeRepository _leaveTypeRepository;
         private ILeaveRequestRepository _leaveRequestRepository;
 
 
-        public UnitOfWork(LeaveManagementDbContext context)
+        public UnitOfWork(LeaveManagementDbContext context,IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public ILeaveAllocationRepository LeaveAllocationRepository =>
@@ -36,7 +38,8 @@ namespace Hr.LeaveManagement.Persistence.Repositories
 
         public async Task Save()
         {
-            await _context.SaveChangesAsync();
+            var username = httpContextAccessor.HttpContext.User.FindFirst(CustomClaimTypes.Uid)?.Value;
+            await _context.SaveChangesAsync(username);
         }
     }
 }

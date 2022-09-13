@@ -1,4 +1,4 @@
-﻿using HR.LeaveManagement.Dormain.Common;
+﻿using Hr.LeaveManagement.Dormain.Common;
 using System;
 
 namespace HR.LeaveManagement.Dormain

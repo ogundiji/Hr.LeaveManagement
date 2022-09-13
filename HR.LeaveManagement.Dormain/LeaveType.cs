@@ -1,7 +1,4 @@
-﻿using HR.LeaveManagement.Dormain.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Hr.LeaveManagement.Dormain.Common;
 
 namespace HR.LeaveManagement.Dormain
 {

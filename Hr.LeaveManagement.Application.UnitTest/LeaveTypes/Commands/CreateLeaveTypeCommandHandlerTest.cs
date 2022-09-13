@@ -17,12 +17,13 @@ namespace Hr.LeaveManagement.Application.UnitTest.LeaveTypes.Commands
     public class CreateLeaveTypeCommandHandlerTest
     {
         private readonly IMapper _mapper;
-        private readonly Mock<ILeaveTypeRepository> _mockRepo;
-        private readonly CreateLeaveTypeDto _leaveTypedto;
+        private readonly Mock<IUnitOfWork> _mockUow;
+        private readonly CreateLeaveTypeDto _leaveTypeDto;
         private readonly CreateLeaveTypeCommandHandler _handler;
+
         public CreateLeaveTypeCommandHandlerTest()
         {
-            _mockRepo = MockLeaveTypeRepository.GetLeaveTypeRepository();
+            _mockUow = MockUnitOfWork.GetUnitOfWork();
 
             var mapperConfig = new MapperConfiguration(c =>
             {
@@ -30,38 +31,37 @@ namespace Hr.LeaveManagement.Application.UnitTest.LeaveTypes.Commands
             });
 
             _mapper = mapperConfig.CreateMapper();
-            _handler = new CreateLeaveTypeCommandHandler(_mockRepo.Object, _mapper);
+            _handler = new CreateLeaveTypeCommandHandler(_mockUow.Object, _mapper);
 
-            _leaveTypedto = new CreateLeaveTypeDto
+            _leaveTypeDto = new CreateLeaveTypeDto
             {
                 DefaultDays = 15,
-                Name = "Test Dto"
+                Name = "Test DTO"
             };
-
         }
 
         [Fact]
         public async Task Valid_LeaveType_Added()
         {
-            var result = await _handler.Handle(new CreateLeaveTypeCommand { leaveTypeDto = _leaveTypedto }, CancellationToken.None);
-            result.ShouldBeOfType<int>();
-            var leaveTypes = await  _mockRepo.Object.GetAll();
+            var result = await _handler.Handle(new CreateLeaveTypeCommand() { leaveTypeDto = _leaveTypeDto }, CancellationToken.None);
 
+            var leaveTypes = await _mockUow.Object.LeaveTypeRepository.GetAll();
 
             result.ShouldBeOfType<BaseCommandResponse>();
-            leaveTypes.Count.ShouldBe(3);
+
+            leaveTypes.Count.ShouldBe(4);
         }
 
         [Fact]
-        public async Task Inavlid_LeaveType_addded()
+        public async Task InValid_LeaveType_Added()
         {
-            _leaveTypedto.DefaultDays = -1;
-            var result = await _handler.Handle(new CreateLeaveTypeCommand { leaveTypeDto = _leaveTypedto }, CancellationToken.None);
+            _leaveTypeDto.DefaultDays = -1;
 
-            var leaveTypes = await _mockRepo.Object.GetAll();
+            var result = await _handler.Handle(new CreateLeaveTypeCommand() { leaveTypeDto = _leaveTypeDto }, CancellationToken.None);
 
+            var leaveTypes = await _mockUow.Object.LeaveTypeRepository.GetAll();
 
-            leaveTypes.Count.ShouldBe(2);
+            leaveTypes.Count.ShouldBe(3);
 
             result.ShouldBeOfType<BaseCommandResponse>();
 
