@@ -17,18 +17,19 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
 {
     public class GetLeaveAllocationListRequestHandlers : IRequestHandler<GetLeaveAllocationListRequest, List<LeaveAllocationDto>>
     {
-        private readonly ILeaveAllocationRepository leaveAllocation;
+        
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IUserService _userService;
 
         public GetLeaveAllocationListRequestHandlers(ILeaveAllocationRepository leaveAllocation,
-              IHttpContextAccessor httpContextAccessor,
+              IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,
             IUserService userService,IMapper _mapper)
         {
             this._mapper = _mapper;
-            this.leaveAllocation = leaveAllocation;
             this._httpContextAccessor = httpContextAccessor;
+            this.unitOfWork = unitOfWork;
             this._userService = userService;
         }
 
@@ -41,7 +42,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
             {
                 var userId = _httpContextAccessor.HttpContext.User.FindFirst(
                     q => q.Type == CustomClaimTypes.Uid)?.Value;
-                leaveAllocations = await leaveAllocation.GetLeaveAllocationsWithDetails(userId);
+                leaveAllocations = await unitOfWork.LeaveAllocationRepository.GetLeaveAllocationsWithDetails(userId);
 
                 var employee = await _userService.GetEmployee(userId);
                 allocations = _mapper.Map<List<LeaveAllocationDto>>(leaveAllocations);
@@ -52,7 +53,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
             }
             else
             {
-                leaveAllocations = await leaveAllocation.GetLeaveAllocationsWithDetails();
+                leaveAllocations = await unitOfWork.LeaveAllocationRepository.GetLeaveAllocationsWithDetails();
                 allocations = _mapper.Map<List<LeaveAllocationDto>>(leaveAllocations);
                 foreach (var req in allocations)
                 {

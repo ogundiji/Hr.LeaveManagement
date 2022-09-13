@@ -11,16 +11,16 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Queries
 {
     public class GetLeaveTypeDetailRequestHandler : IRequestHandler<GetLeaveTypeDetailRequest, LeaveTypeDto>
     {
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper _mapper;
-        public GetLeaveTypeDetailRequestHandler(ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public GetLeaveTypeDetailRequestHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _leaveTypeRepository = leaveTypeRepository;
+            this.unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<LeaveTypeDto> Handle(GetLeaveTypeDetailRequest request, CancellationToken cancellationToken)
         {
-            var leaveDetailRecord = await _leaveTypeRepository.Get(request.Id);
+            var leaveDetailRecord = await unitOfWork.LeaveTypeRepository.Get(request.Id);
 
             if (leaveDetailRecord == null)
                 throw new NotFoundException(nameof(leaveDetailRecord), request.Id);

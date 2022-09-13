@@ -1,4 +1,5 @@
 using Hr.LeaveManagement.MVC.Contracts;
+using Hr.LeaveManagement.MVC.Middleware;
 using Hr.LeaveManagement.MVC.Services;
 using Hr.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -32,13 +33,20 @@ namespace Hr.LeaveManagement.MVC
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = new PathString("/users/login");
+            });
+
+         
             services.AddTransient<IAuthenticationServices, AuthenticationService>();
 
-            services.AddHttpClient<IClient, Client>(c=>c.BaseAddress= new Uri("https://localhost:44390"));
+            services.AddHttpClient<IClient, Client>(c=>c.BaseAddress= new Uri("https://localhost:44390/"));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<ILeaveTypeService, LeaveTypeService>();
-
+            services.AddScoped<ILeaveAllocationService, LeaveAllocationService>();
+            services.AddScoped<ILeaveRequestService, LeaveRequestService>();
 
             services.AddSingleton<ILocalStorageService, LocalStorageService>();
             services.AddControllersWithViews();
@@ -64,6 +72,7 @@ namespace Hr.LeaveManagement.MVC
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseMiddleware<RequestMiddleware>();
 
             app.UseAuthorization();
 

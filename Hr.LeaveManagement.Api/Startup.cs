@@ -1,4 +1,5 @@
 using Hr.LeaveManaagement.Infrastructure;
+using Hr.LeaveManagement.Api.Middleware;
 using Hr.LeaveManagement.Identity;
 using Hr.LeaveManagement.Persistence;
 using HR.LeaveManagement.Application;
@@ -51,12 +52,16 @@ namespace Hr.LeaveManagement.Api
                 
             }
 
+
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseAuthentication();
             #region for production purposes move it out
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hr LeaveManagement Api v1"));
             #endregion
 
-            app.UseAuthentication();
+           
 
             app.UseHttpsRedirection();
 

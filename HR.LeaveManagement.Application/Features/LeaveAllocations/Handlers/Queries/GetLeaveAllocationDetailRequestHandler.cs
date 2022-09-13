@@ -12,15 +12,18 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
     {
         private readonly ILeaveAllocationRepository leaveAllocation;
         private readonly IMapper _mapper;
-        public GetLeaveAllocationDetailRequestHandler(IMapper mapper, ILeaveAllocationRepository leaveAllocation)
+        private readonly IUnitOfWork unitOfWork;
+
+        public GetLeaveAllocationDetailRequestHandler(IMapper mapper,IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            this.leaveAllocation = leaveAllocation;
+            this.unitOfWork = unitOfWork;
+           
         }
 
         public async Task<LeaveAllocationDto> Handle(GetLeaveAllocationDetailRequest request, CancellationToken cancellationToken)
         {
-            var allocation = await leaveAllocation.GetLeaveAllocationWithDetails(request.Id);
+            var allocation = await unitOfWork.LeaveAllocationRepository.GetLeaveAllocationWithDetails(request.Id);
             return _mapper.Map<LeaveAllocationDto>(allocation);
         }
     }
