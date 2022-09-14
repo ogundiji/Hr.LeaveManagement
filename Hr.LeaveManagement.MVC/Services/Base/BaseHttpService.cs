@@ -31,6 +31,7 @@ namespace Hr.LeaveManagement.MVC.Services.Base
 
         protected void AddBearerToken()
         {
+            
             if (_localStorage.Exists("token"))
                 _client.HttpClient.DefaultRequestHeaders.Authorization = 
                     new AuthenticationHeaderValue("Bearer", _localStorage.GetSTorageValue<string>("token"));

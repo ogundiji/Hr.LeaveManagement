@@ -42,7 +42,7 @@ namespace Hr.LeaveManagement.MVC
          
             services.AddTransient<IAuthenticationServices, AuthenticationService>();
 
-            services.AddHttpClient<IClient, Client>(c=>c.BaseAddress= new Uri("https://localhost:44390/"));
+            services.AddHttpClient<IClient, Client>(cl => cl.BaseAddress = new Uri("https://localhost:44390"));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<ILeaveTypeService, LeaveTypeService>();
             services.AddScoped<ILeaveAllocationService, LeaveAllocationService>();
