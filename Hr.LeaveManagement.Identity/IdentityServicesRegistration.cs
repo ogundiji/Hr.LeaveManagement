@@ -17,7 +17,7 @@ namespace Hr.LeaveManagement.Identity
 {
     public static class IdentityServicesRegistration
     {
-        public static IServiceCollection ConfigureIdentityServices(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection ConfigureIdentityServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
@@ -29,7 +29,7 @@ namespace Hr.LeaveManagement.Identity
                 .AddEntityFrameworkStores<LeaveManagementIdentityDbContext>().AddDefaultTokenProviders();
 
             services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IUserService, UserService>(); 
+            services.AddTransient<IUserService, UserService>();
 
             services.AddAuthentication(options =>
             {
