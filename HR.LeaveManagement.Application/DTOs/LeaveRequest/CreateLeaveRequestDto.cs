@@ -1,7 +1,4 @@
-﻿using HR.LeaveManagement.Application.DTOs.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace HR.LeaveManagement.Application.DTOs.LeaveRequest
 {

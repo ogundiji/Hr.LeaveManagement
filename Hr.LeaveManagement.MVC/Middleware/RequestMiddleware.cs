@@ -61,6 +61,7 @@ namespace Hr.LeaveManagement.MVC.Middleware
                     }
                 }
                 await _next(httpContext);
+
             }
             catch (Exception ex)
             {

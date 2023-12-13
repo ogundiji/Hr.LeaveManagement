@@ -66,14 +66,15 @@ namespace Hr.LeaveManagement.MVC
                 app.UseHsts();
             }
             app.UseCookiePolicy();
-            app.UseAuthentication();
-
+            
+           
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
             app.UseMiddleware<RequestMiddleware>();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -118,6 +118,7 @@ namespace Hr.LeaveManagement.Identity.Services
             .Union(userClaims)
             .Union(roleclaims);
 
+            DateTime expireAt = DateTime.Now.AddMinutes(_jwtSettings.DurationInMinutes);
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
@@ -125,7 +126,7 @@ namespace Hr.LeaveManagement.Identity.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                expires:expireAt,
                 signingCredentials: signingCredentials);
             return jwtSecurityToken;
         }

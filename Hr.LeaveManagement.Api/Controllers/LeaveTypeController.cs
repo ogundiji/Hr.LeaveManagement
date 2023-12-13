@@ -3,6 +3,7 @@ using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -12,7 +13,8 @@ namespace Hr.LeaveManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Administrator")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(Roles ="Administrator")]
     public class LeaveTypeController : ControllerBase
     {
 

@@ -53,5 +53,13 @@ namespace Hr.LeaveManagement.MVC.Controllers
             ModelState.AddModelError("", "Registration attempt failed please try again");
             return View(registration);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> LogOut()
+        {
+            await _authenticationServices.Logout();
+            return RedirectToAction("Index","HomePage");
+        }
     }
 }

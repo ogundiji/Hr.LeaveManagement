@@ -44,7 +44,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseAuthentication();
+
 
 #region for production purposes move it out
 app.UseSwagger();
@@ -55,8 +55,9 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hr LeaveMan
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
+//app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("CorsPolicy");
